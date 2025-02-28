@@ -1,23 +1,2840 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@font-face {
+  font-family: 'Roboto Condensed';
+  src: url('/fonts/RobotoCondensed-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
 
-@layer base {
-  /* normal */
-  @font-face {
-    font-family: "Adelle Sans";
-    src: url("/fonts/AdelleSans-Regular.woff2") format("woff2");
-    font-style: normal;
-    font-display: swap;
-    font-weight: 300;
+:root {
+    --neon-blue: #00f3ff;
+    --neon-green: #76ff03;
+    --scanline-color: rgba(255, 255, 255, 0.03);
+    --crt-glow: radial-gradient(circle at center, rgba(0, 243, 255, 0.15), transparent 60%);
+    --neon-purple: #b026ff;
+    --neon-yellow: #ffeb3b;
+    --neon-pink: #ff1493;
+    --neon-red: #ff0000;
+    --cyber-black: #0a0a0f;
+    --cyber-dark: #1a1a1f;
+    --cyber-gray: rgba(255, 255, 255, 0.1);
+    --cyber-light: rgba(255, 255, 255, 0.8);
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, var(--cyber-black) 0%, var(--cyber-dark) 100%);
+    font-family: 'Roboto Condensed', monospace;
+    min-height: 100vh;
+}
+
+.background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover; /* This is critical for proper filling */
+  z-index: -1;
+  filter: brightness(0.9) contrast(1.2) saturate(1.1);
+  pointer-events: none;
+  opacity: 0.1 !important;
+  mix-blend-mode: screen;
+}
+
+/* Remove the transform centering approach as it can cause scaling issues */
+.background-video source {
+  width: 100%;
+  height: 100%;
+}
+
+/* Add gradient overlay for better integration */
+.background-video::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(0, 0, 0, 0.4) 0%,
+        rgba(10, 10, 15, 0.6) 100%
+    );
+    pointer-events: none;
+}
+
+.ps2-nav {
+    position: absolute;
+    top: -100px;
+    right: 3rem;
+    display: flex;
+    align-items: center;
+    z-index: 40;
+    white-space: nowrap;
+    min-width: 400px;
+    pointer-events: auto;
+}
+
+/* Add specific override for index page */
+body:not(.clips-page) .ps2-nav {
+    top: -100px;  /* Lower position only for non-clips pages */
+}
+
+/* Keep the clips page override */
+body.clips-page .ps2-nav {
+    top: -175px;
+}
+
+.menu-item {
+    pointer-events: auto;
+    background: var(--cyber-gray) !important;
+    backdrop-filter: blur(5px);
+    border-radius: 5px;
+    padding: 1rem 2rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    position: relative;
+    z-index: 41;
+    box-shadow: none;
+    filter: brightness(1);
+    transition: transform 0.3s ease, filter 0s;
+    display: inline-block;
+}
+
+.blue-item-stroke {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--cyber-black);
+    -webkit-text-stroke: 2px var(--cyber-light);
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.green-item-stroke {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--cyber-black);
+    -webkit-text-stroke: 2px var(--cyber-light);
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.blue-item-no-stroke {
+    position: relative;
+    color: var(--cyber-black);
+    text-shadow: none;
+    z-index: 2;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.green-item-no-stroke {
+    position: relative;
+    color: var(--cyber-black);
+    text-shadow: none;
+    z-index: 2;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+/* Add glow only during hover */
+.menu-item:hover {
+    transform: translateX(10px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+    filter: brightness(1.2);
+}
+
+/* Add glow only on hover */
+.menu-item:hover .blue-item-stroke {
+    filter: drop-shadow(0 0 5px currentColor);
+}
+
+.menu-item:hover .green-item-stroke {
+    filter: drop-shadow(0 0 5px currentColor);
+}
+
+.menu-item:nth-child(2) {
+    background: rgba(118, 255, 3, 0.1) !important;
+}
+
+.menu-item:nth-child(2):hover {
+    box-shadow: 0 0 30px var(--neon-green);
+}
+
+.relative {
+    position: relative;
+}
+
+.cyber-title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+.cyber-title {
+    position: relative;
+    font-size: 72px;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 30px rgba(0, 243, 255, 0.5));
+    animation: chromatic-aberration 2s infinite linear, glitch-effect 5s infinite linear;
+    white-space: nowrap;
+    color: var(--cyber-light);
+    text-align: center;
+    z-index: 5;
+    font-family: 'Roboto Condensed', monospace;
+    font-weight: bold;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    width: fit-content;
+    margin: 0 auto;
+    left: 0 !important;
+}
+
+.title-layer-1,
+.title-layer-2,
+.title-layer-3 {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+}
+
+@keyframes glitch-effect {
+    0%, 100% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 3px);
+    }
+    40% {
+        transform: translate(3px, -2px);
+    }
+    60% {
+        transform: translate(-4px, 1px);
+    }
+    80% {
+        transform: translate(2px, -3px);
+    }
+}
+
+@keyframes chromatic-aberration {
+    0% {
+        text-shadow: 
+            0.05em 0  rgba(255,0,0,0.7),
+            -0.05em 0 rgba(0,0,255,0.7),
+            0 0.05em rgba(0,255,0,0.7);
+    }
+    50% {
+        text-shadow: 
+            -0.08em -0.03em rgba(255,0,0,0.7),
+            0.07em 0.02em rgba(0,0,255,0.7),
+            0.03em -0.06em rgba(0,255,0,0.7);
+    }
+    100% {
+        text-shadow: 
+            0.05em 0  rgba(255,0,0,0.7),
+            -0.05em 0 rgba(0,0,255,0.7),
+            0 0.05em rgba(0,255,0,0.7);
+    }
+}
+
+@keyframes layer-glitch-1 {
+    0%, 100% { transform: translate(1px, -0.5px); }
+    50% { transform: translate(-1px, 0.5px); }
+}
+
+@keyframes layer-glitch-2 {
+    0%, 100% { transform: translate(-0.5px, 1px); }
+    50% { transform: translate(0.5px, -1px); }
+}
+
+.crt-filter {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(rgba(18, 16, 16, 0.1) 50%, rgba(0, 0, 0, 0.15) 50%),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02)),
+        repeating-linear-gradient(
+            0deg,
+            var(--scanline-color) 0px,
+            var(--scanline-color) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+    background-size: 100% 4px, 100% 100%, 100% 4px;
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: overlay;
+    animation: scanlines-move 10s linear infinite;
+}
+
+@keyframes scanlines-move {
+    0% {
+        background-position: 0 0, 0 0, 0 0;
+    }
+    100% {
+        background-position: 0 100%, 0 0, 0 100%;
+    }
+}
+
+/* Position the canvas */
+#gridCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    filter: brightness(1.2);
+}
+
+.content {
+    position: relative;
+    z-index: 3;
+}
+
+/* Random glitch trigger */
+@keyframes random-glitch {
+    0% { transform: translate(0,0); }
+    5% { transform: translate(-2px, 3px); }
+    10% { transform: translate(3px, -1px); }
+    15% { transform: translate(0,0); }
+    100% { transform: translate(0,0); }
+}
+
+.cyber-title:hover {
+    animation: chromatic-aberration 0.8s infinite, glitch-effect 2s infinite;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .cyber-title {
+        font-size: 40px;
+    }
+    
+    .title-layer-1,
+    .title-layer-2,
+    .title-layer-3 {
+        display: none !important;
+    }
+    
+    .cyber-title::after {
+        content: '[DEGEN]';
+        display: block;
+        animation: none;
+        margin-top: 1.5rem;
+        white-space: nowrap;
+        position: relative;
+        left: 0;
+    }
+
+    /* Disable hover effects on mobile */
+    .social-button:hover {
+        transform: none;
+        box-shadow: none;
+        filter: brightness(1);
+    }
+
+    /* Adjust text positioning */
+    .social-button .blue-item-no-stroke,
+    .social-button .green-item-no-stroke {
+        position: relative;
+        top: -1px;
+        left: -1px;
+    }
+
+    /* Fix button sizing */
+    .social-button {
+        padding: 0.8rem 1.5rem !important;
+        font-size: 0.8rem;
+    }
+
+    .video-container {
+        margin-top: 200px;
+        padding: 0 1rem;
+        overflow: visible;
+    }
+
+    .video-wrapper {
+        margin: 0 35px 0 5px; /* 35px right, 5px left */
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    mux-player {
+        width: calc(100% - 5px); /* Reduce width */
+        margin: 0 0 0 5px; /* 5px left margin */
+        transform: translateX(15px); /* Shift right by 15px */
+        height: calc(100% - 10px);
+    }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+    .cyber-title {
+        font-size: 1.5rem;
+        padding: 0.5rem;
+        left: 10px !important;
+    }
+    
+    .ps2-nav {
+        top: 5rem;
+        right: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .menu-item {
+        padding: 0.5rem !important;
+        font-size: 0.7rem;
+    }
+
+    /* Further mobile adjustments */
+    .social-container {
+        margin-top: 1.5rem;
+        gap: 1rem;
+    }
+    
+    .social-button {
+        width: 100%;
+        max-width: 200px;
+        padding: 0.6rem 1rem !important;
+    }
+    
+}
+
+/* Add this to make the logo scale smoothly */
+@keyframes mobile-pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(0.95); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (max-width: 768px) {
+    .cyber-title {
+        animation: mobile-pulse 2s ease-in-out infinite;
+    }
+}
+
+/* Add these styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999 !important;
+    background-color: rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-content {
+    position: relative;
+    z-index: 10000;
+    max-width: 80%;
+    text-align: center;
+}
+
+.loading-title {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--cyber-light);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px var(--neon-blue);
+}
+
+.loading-subtitle {
+    font-family: 'Press Start 2P', monospace;
+    color: var(--cyber-light);
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px var(--neon-green);
+}
+
+.start-button {
+    background: rgba(0, 243, 255, 0.1);
+    border: none;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', monospace;
+    margin-top: 2rem;
+}
+
+.start-button:hover {
+    transform: translateX(10px);
+    filter: brightness(1.5);
+}
+
+/* Animation for the loading content */
+@keyframes loading-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Update video container styles */
+.video-container {
+    position: relative;
+    width: 100%;
+    max-width: 1280px;
+    margin: 150px auto 0;
+    z-index: 3;
+    padding: 0 180px 0 1rem;  /* Add padding on the right for controls */
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(16px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: visible;
+    border-radius: 8px;
+    margin: 0 10px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+mux-player {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 20px); /* 10px padding on each side */
+    height: calc(100% - 20px);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Update mobile styles for video container */
+@media (max-width: 768px) {
+    .video-wrapper {
+        margin: 0 35px 0 5px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+    
+    mux-player {
+        width: calc(100% - 5px); /* Reduce width */
+        margin: 0 0 5px 0px; /* 5px left margin */
+        height: calc(100% - 10px);
+    }
+}
+
+@media (max-width: 480px) {
+    .video-container {
+        margin-top: 180px;
+    }
+}
+
+/* First, fix the scrolling issue */
+body {
+    margin: 0;
+    background: linear-gradient(135deg, var(--cyber-black) 0%, var(--cyber-dark) 100%);
+    font-family: 'Roboto Condensed', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    position: relative;
+    overflow: visible !important;
+    z-index: 1;
+}
+
+/* Style the social buttons */
+.social-container {
+    display: none; /* Remove old container */
+}
+
+.social-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    position: relative;
+    min-width: 80px;
+    text-align: center;
+}
+
+.social-button .relative {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.social-button [class*="-item-stroke"] {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    color: white !important;
+    -webkit-text-stroke: 0 !important;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    z-index: 1;
+    white-space: nowrap;
+}
+
+.social-button [class*="-item-no-stroke"] {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    color: white !important;
+    text-shadow: none;
+    z-index: 2;
+    white-space: nowrap;
+}
+
+.social-button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+}
+
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .social-button {
+        padding: 6px 12px;
+        font-size: 12px;
+        min-width: 60px;
+    }
+}
+
+/* Update CRT filter to be fixed but allow content to scroll */
+.crt-filter {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Ensure background video stays fixed */
+.background-video {
+    position: fixed;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .social-container {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 3rem;
+    }
+    
+    .social-button {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+}
+
+/* Add this new rule for scrollable content area */
+.content-scrollable {
+    position: relative;
+    z-index: 3;
+    min-height: 100vh;
+    padding-top: 100px;  /* Match your video container margin */
+}
+
+/* Add these new rules */
+.main-content {
+    position: relative;
+    z-index: 3;
+    min-height: 100vh;
+    overflow-y: auto;
+    height: 100vh;
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-y: auto;
+}
+
+/* Keep fixed elements */
+.background-video,
+.crt-filter,
+#gridCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+
+/* Mobile specific fixes */
+@media (max-width: 768px) {
+   
+}
+
+/* Add these new styles */
+.glitch-button {
+    position: relative;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
+    filter: brightness(0.5);
+    font-family: 'Press Start 2P', monospace;
+}
+
+.glitch-button:hover {
+    transform: translateX(10px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+    filter: brightness(1.5);
+}
+
+.glitch-button .blue-item-stroke,
+.glitch-button .green-item-stroke {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #000;
+    -webkit-text-stroke: 2px var(--cyber-light);
+    z-index: 1;
+}
+
+.glitch-button .blue-item-no-stroke,
+.glitch-button .green-item-no-stroke {
+    position: relative;
+    color: #000;
+    z-index: 2;
+    opacity: 0.9;
+}
+
+.glitch-button.small {
+    padding: 0.3rem 1rem;
+    font-size: 0.7rem;
+    margin: 0;
+    border-width: 1px;
+}
+
+.status-message {
+    color: var(--cyber-light);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    animation: text-glitch 1s infinite;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes text-glitch {
+    0% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+    50% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+    100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .glitch-button {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.7rem;
+    }
+    
+    .glitch-button.small {
+        padding: 0.2rem 0.6rem;
+        font-size: 0.6rem;
+    }
+}
+
+/* Clip controls styling */
+#clip-creation {
+    display: none;
+    gap: 1rem;
+    align-items: center;
+}
+
+.glitch-button.small {
+    padding: 0.3rem 1rem;
+    font-size: 0.7rem;
+    margin: 0;
+}
+
+#clip-status {
+    margin-left: 1rem;
+    min-width: 200px;
+}
+
+@media (max-width: 768px) {
+    #clip-creation {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .glitch-button.small {
+        width: 100%;
+    }
+}
+
+/* Update the submission container styles */
+.submission-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  margin: 0 auto;
+  flex-wrap: wrap; /* Allow wrapping for mobile */
+}
+
+/* Update topic input styles */
+.topic-input {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(16px);
+  color: var(--cyber-light);
+  padding: 8px 16px;
+  height: 36px;
+  border-radius: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  outline: none;
+  font-family: 'Roboto Condensed', monospace;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  width: auto; /* Allow natural width */
+  min-width: 300px; /* Minimum width */
+  text-align: center;
+}
+
+/* Update form container styles */
+.form-glow {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
+              inset 0 0 10px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  margin: 2rem auto;
+  padding: 20px;
+  width: 70% !important;
+  max-width: 1200px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .submission-container {
+    gap: 0.5rem;
+  }
+  
+  .topic-input {
+    min-width: 200px;
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+/* Add this to your globals.css */
+.topic-input {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(16px);
+    color: var(--cyber-light);
+    padding: 12px 24px;
+    border-radius: 4px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    outline: none;
+    width: 75%;
+    min-width: 200px;
+    font-family: 'Roboto Condensed', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.topic-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 10px;
+}
+
+.topic-input:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.topic-input:focus {
+    border-color: var(--cyber-light);
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.transaction-notification {
+    position: absolute;
+    top: calc(100% + 20px);
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(16px);
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid rgba(0, 243, 255, 0.3);
+    min-width: 300px;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+    animation: fadeIn 0.3s ease;
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.purple-item-stroke {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #000;
+    -webkit-text-stroke: 3px var(--neon-purple);
+    z-index: 1;
+}
+
+.purple-item-no-stroke {
+    position: relative;
+    color: #000;
+    text-shadow: none;
+    z-index: 2;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.yellow-item-stroke {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #000;
+    -webkit-text-stroke: 3px var(--neon-yellow);
+    z-index: 1;
+}
+
+.yellow-item-no-stroke {
+    position: relative;
+    color: #000;
+    text-shadow: none;
+    z-index: 2;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+/* Add hover effects for new colors */
+.menu-item:nth-child(4):hover {
+    box-shadow: 0 0 30px var(--neon-purple);
+}
+
+.menu-item:nth-child(6):hover {
+    box-shadow: 0 0 30px var(--neon-yellow);
+}
+
+/* Add pink stroke style */
+.pink-item-stroke {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #000;
+    -webkit-text-stroke: 3px var(--neon-pink);
+    z-index: 1;
+}
+
+.pink-item-no-stroke {
+    position: relative;
+    color: #000;
+    text-shadow: none;
+    z-index: 2;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+/* Add hover effect for pink */
+.menu-item:nth-child(7):hover {
+    box-shadow: 0 0 30px var(--neon-pink);
+}
+
+.clip-card {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    padding: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.clip-card:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+
+/* Add red hover effect */
+.menu-item.live-button:hover {
+    box-shadow: 0 0 30px var(--neon-red);
+}
+
+/* Live bullet point */
+.live-bullet {
+    width: 8px;
+    height: 8px;
+    background-color: var(--neon-red);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 10px var(--neon-red);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Add this to your globals.css */
+body.clips-page {
+    padding-top: 200px !important;
+}
+
+.clips-grid-container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.clip-thumbnail {
+    width: 100%;  /* Ensure thumbnails take full width of their grid cell */
+    display: block;
+}
+
+/* Remove all the complex grid container styles and just keep these */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* Media queries for responsive grid */
+@media (max-width: 1200px) {
+    .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+/* Add these new styles for the video modal */
+.video-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.98);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+}
+
+.video-modal-content {
+    width: 90vw;
+    height: 90vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.video-modal-player {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    background: black;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.video-modal-player mux-player {
+    width: 100%;
+    height: 100%;
+}
+
+.video-modal-close {
+    position: absolute;
+    top: -3rem;
+    right: 0;
+    padding: 0.5rem 1rem;
+    color: var(--cyber-light);
+    border: 2px solid var(--cyber-light);
+    background: rgba(0, 0, 0, 0.5);
+    font-family: 'Press Start 2P', monospace;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.video-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+/* Add this specific override for the clips page */
+body.clips-page .ps2-nav {
+    top: -175px; /* -25px - 150px */
+}
+
+/* Add this specific override for the clips page logo */
+body.clips-page .cyber-title {
+    top: -175px; /* Match the nav position */
+    left: 3rem !important;
+}
+
+/* Update menu item styles */
+.menu-item.logout-button {
+    background: rgba(255, 0, 0, 0.1) !important;
+}
+
+.menu-item.logout-button:hover {
+    box-shadow: 0 0 30px var(--neon-red);
+}
+
+.menu-item.login-button {
+    background: rgba(118, 255, 3, 0.1) !important;
+}
+
+.menu-item.login-button:hover {
+    box-shadow: 0 0 30px var(--neon-green);
+}
+
+/* Add new styles for clip controls positioning */
+.clip-controls-container {
+  position: absolute;
+  right: -180px;  /* Position to the right of the video */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 160px;  /* Fixed width for the controls */
+}
+
+/* Update video container to accommodate side controls */
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin: 150px auto 0;
+  z-index: 3;
+  padding: 0 180px 0 1rem;  /* Add padding on the right for controls */
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(16px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Update glitch button styles for vertical layout */
+.glitch-button.vertical {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 1400px) {
+  .clip-controls-container {
+    position: relative;
+    right: 0;
+    top: 0;
+    transform: none;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    gap: 0.5rem;
   }
 
-  /* semibold */
-  @font-face {
-    font-family: "Adelle Sans";
-    src: url("/fonts/AdelleSans-Semibold.woff2") format("woff2");
-    font-style: normal;
-    font-display: swap;
-    font-weight: 600;
+  .video-container {
+    padding: 0 1rem;
+  }
+
+  .glitch-button.vertical {
+    width: auto;
+  }
+}
+
+/* Update glitch button text alignment */
+.glitch-button .blue-item-stroke,
+.glitch-button .green-item-stroke,
+.glitch-button .purple-item-stroke,
+.glitch-button .yellow-item-stroke,
+.glitch-button .pink-item-stroke,
+.glitch-button .red-item-stroke {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+}
+
+.glitch-button .blue-item-no-stroke,
+.glitch-button .green-item-no-stroke,
+.glitch-button .purple-item-no-stroke,
+.glitch-button .yellow-item-no-stroke,
+.glitch-button .pink-item-no-stroke,
+.glitch-button .red-item-no-stroke {
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    text-align: center;
+}
+
+/* Add specific styles for vertical buttons */
+.glitch-button.vertical {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+}
+
+.glitch-button.vertical.small {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+/* Reset and update navbar styles */
+nav {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  height: 48px;
+}
+
+.nav-button {
+  color: black;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 14px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.nav-button:hover,
+.nav-button.active {
+  color: white;
+  background: black;
+}
+
+/* Mobile adjustments */
+@media (max-width: 1024px) {
+  nav {
+    height: 40px;
+  }
+
+  .nav-button {
+    font-size: 13px;
+    padding: 11px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    height: 36px;
+  }
+
+  .nav-button {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+}
+
+/* New title styling */
+.degenswim-title {
+  font-family: 'TeX Gyre Heros Condensed', monospace;
+  font-size: 96px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  position: relative;
+  text-shadow: 
+    2px 2px 0px #ff00ff,
+    -2px -2px 0px #00ffff;
+  animation: neon 1.5s ease-in-out infinite alternate;
+  letter-spacing: 2px;
+  filter: drop-shadow(0 0 30px rgba(0, 243, 255, 0.5));
+  white-space: nowrap;
+  margin-top: 4rem;
+}
+
+@keyframes neon {
+  from {
+    text-shadow: 
+      0 0 10px #fff,
+      0 0 20px #fff,
+      0 0 30px #fff,
+      0 0 40px #ff00de,
+      0 0 70px #ff00de,
+      0 0 80px #ff00de,
+      0 0 100px #ff00de,
+      0 0 150px #ff00de;
+  }
+  to {
+    text-shadow: 
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 15px #fff,
+      0 0 20px #ff00de,
+      0 0 35px #ff00de,
+      0 0 40px #ff00de,
+      0 0 50px #ff00de,
+      0 0 75px #ff00de;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 1024px) {
+  .degenswim-title {
+    font-size: 72px;
+  }
+  
+  nav {
+    height: 36px;
+  }
+
+  .nav-button {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .degenswim-title {
+    font-size: 48px;
+  }
+  
+  nav {
+    height: 32px;
+  }
+
+  .nav-button {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}
+
+/* Core layout styles */
+body {
+  margin: 0;
+  background: linear-gradient(135deg, var(--cyber-black) 0%, var(--cyber-dark) 100%);
+  font-family: 'Roboto Condensed', monospace;
+  min-height: 100vh;
+}
+
+/* Video styles */
+.aspect-video {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  overflow: hidden; /* Add this to prevent content from spilling out */
+  background: rgba(0, 0, 0, 0.2); /* Add a subtle background to see the container */
+  border-radius: 4px;
+}
+
+.aspect-video > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Add specific mux-player styles to prevent it from breaking out */
+mux-player {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Ensure the parent container properly contains the player */
+.video-glow {
+  position: relative;
+  overflow: hidden !important;
+  z-index: 1;
+  margin: 3rem auto 0;
+  width: 80% !important;
+  max-width: 1200px;
+  border-radius: 4px;
+}
+
+/* Topic input styles */
+.topic-input {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(16px);
+  color: white;
+  padding: 8px 16px; /* Reduced padding to match button height */
+  height: 36px; /* Match button height */
+  border-radius: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  outline: none;
+  font-family: 'Roboto Condensed', monospace;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+  line-height: 20px; /* Ensure text is vertically centered */
+}
+
+.topic-input:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* Social button styles */
+.social-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+  min-width: 80px;
+}
+
+.social-button .relative {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.social-button [class*="-item-stroke"] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  text-align: center;
+  color: white !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.social-button [class*="-item-no-stroke"] {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  color: white !important;
+  text-shadow: none;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+
+/* Add specific hover effects */
+.social-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+}
+
+/* Platform-specific glow effects */
+.social-button-twitter:hover { box-shadow: 0 0 15px rgba(29, 161, 242, 0.6) !important; }
+.social-button-telegram:hover { box-shadow: 0 0 15px rgba(0, 136, 204, 0.6) !important; }
+.social-button-discord:hover { box-shadow: 0 0 15px rgba(88, 101, 242, 0.6) !important; }
+.social-button-youtube:hover { box-shadow: 0 0 15px rgba(255, 0, 0, 0.6) !important; }
+.social-button-twitch:hover { box-shadow: 0 0 15px rgba(145, 70, 255, 0.6) !important; }
+.social-button-dexscreener:hover { box-shadow: 0 0 15px rgba(37, 193, 149, 0.6) !important; }
+.social-button-coingecko:hover { box-shadow: 0 0 15px rgba(255, 206, 0, 0.6) !important; }
+.social-button-tiktok:hover { box-shadow: 0 0 15px rgba(255, 0, 80, 0.6) !important; }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .topic-input {
+    font-size: 12px;
+    padding: 6px 12px;
+    height: 32px; /* Slightly smaller for mobile */
+    line-height: 18px;
+  }
+
+  .social-button {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-width: 60px;
+  }
+  
+  .social-button [class*="-item-stroke"] {
+    -webkit-text-stroke-width: 1.5px;
+  }
+}
+
+/* Video container styles */
+.video-glow {
+  position: relative;
+  overflow: visible !important;
+  z-index: 1;
+  margin: 3rem auto 0;
+  width: 80% !important;
+  max-width: 1200px;
+}
+
+/* Add margin between video and controls */
+.video-controls {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Update glitch button styles */
+.glitch-button {
+  filter: brightness(1.2); /* Make buttons brighter by default */
+}
+
+.glitch-button:hover {
+  transform: translateY(4px); /* Move down instead of right */
+  filter: brightness(1.5); /* Even brighter on hover */
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+}
+
+/* Specific styles for the clip button */
+.glitch-button.clip-button {
+  filter: brightness(1.3); /* Slightly brighter than other buttons */
+}
+
+.glitch-button.clip-button:hover {
+  filter: brightness(1.6);
+}
+
+/* Add styles for the chart container */
+.chart-container {
+  width: 80%;
+  max-width: 1200px;
+  margin: 3rem auto;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
+              inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 500px; /* Increased height for better visibility */
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.chart-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .chart-container {
+    width: 95%;
+    padding: 10px;
+    margin: 2rem auto;
+  }
+  
+  .chart-wrapper {
+    height: 400px;
+  }
+}
+
+/* Add these new styles for the pie chart */
+.pie-chart {
+  transform: rotate(-90deg);
+  border-radius: 50%;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
+  transition: all 0.3s ease;
+}
+
+.pie-chart:hover {
+  transform: rotate(-90deg) scale(1.02);
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
+}
+
+.drop-shadow-glow {
+  filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.5));
+}
+
+/* Update tokenomics card styles */
+.tokenomics-card {
+  position: relative;
+  overflow: visible !important;
+  z-index: 1;
+  background: rgba(10, 10, 15, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+}
+
+.tokenomics-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 0 40px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(0, 243, 255, 0.15);
+}
+
+/* Add hover effect for the pie chart */
+.tokenomics-card:hover .rounded-full {
+  transform: rotate(-85deg) scale(1.02);
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .tokenomics-card {
+    padding: 1.5rem;
+  }
+  
+  .pie-chart {
+    transform: rotate(-90deg) scale(0.8);
+  }
+}
+
+/* Add these simpler pie chart styles */
+.shadow-glow {
+  box-shadow: 
+    0 10px 30px rgba(255, 255, 255, 0.2),
+    0 0 15px rgba(255, 255, 255, 0.3),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.tokenomics-card h2 {
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+}
+
+/* Token distribution legend styles */
+.token-distribution-legend {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 380px;
+}
+
+.token-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  border-left: 3px solid;
+  transition: all 0.2s ease;
+}
+
+.token-legend-item:hover {
+  transform: translateX(5px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.token-legend-color {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.token-legend-text {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Adjust tokenomics card for better containment */
+.tokenomics-card {
+  position: relative;
+  overflow: hidden !important;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .token-distribution-legend {
+    padding: 0.75rem;
+    max-width: 100%;
+  }
+  
+  .token-legend-item {
+    padding: 0.4rem 0.6rem;
+  }
+  
+  .token-legend-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* Pie chart styles */
+.pie-chart-container {
+  position: relative;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  will-change: transform;
+  z-index: 1;
+  overflow: visible !important;
+}
+
+.pie-segment {
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center !important;
+  transform-box: fill-box;
+  transform: scale(1);
+  will-change: transform;
+  position: relative;
+  z-index: 1;
+}
+
+.pie-segment:hover {
+  transform: scale(1.25) translateZ(50px) !important;
+  filter: brightness(1.4) drop-shadow(0 0 25px currentColor) !important;
+  z-index: 999999999 !important; /* Extremely high z-index */
+}
+
+.pie-segment[fill] {
+  isolation: isolate;
+  mix-blend-mode: normal;
+  position: relative; /* Create stacking context */
+}
+
+/* Update SVG container styles */
+.pie-chart-container svg {
+  overflow: visible !important;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Update token legend styles for desktop alignment */
+@media (min-width: 1024px) {
+  .token-distribution-legend {
+    margin-top: 20px; /* Add some space at the top to align with pie chart */
+  }
+}
+
+/* Add these new styles for the tokenomics layout */
+.tokenomics-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+.tokenomics-content {
+  position: relative;
+  overflow: visible !important;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+.pie-chart-wrapper {
+  position: relative;
+  overflow: visible !important;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  padding: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .pie-chart-wrapper {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 4rem;
+  }
+
+  .pie-chart-container {
+    flex: 0 0 auto;
+    width: 400px; /* Fixed width for the pie chart */
+  }
+
+  .token-distribution-legend {
+    flex: 0 0 auto;
+    width: 320px; /* Fixed width for the legend */
+  }
+}
+
+/* Update pie segment styles */
+.segment-group {
+  transform-style: preserve-3d;
+  transform-origin: center;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.segment-group:hover {
+  z-index: 1000;
+}
+
+.pie-segment {
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center;
+  transform-box: fill-box;
+  transform: scale(1);
+}
+
+.segment-group:hover .pie-segment {
+  transform: scale(1.25) translateZ(50px);
+  filter: brightness(1.4) drop-shadow(0 0 25px currentColor);
+}
+
+/* Update SVG container styles */
+.pie-chart-container svg {
+  overflow: visible !important;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Remove any competing z-index styles from other elements */
+.pie-chart-container,
+.tokenomics-card,
+.tokenomics-content,
+.pie-chart-wrapper {
+  transform-style: preserve-3d;
+  overflow: visible !important;
+}
+
+@keyframes hoverAnimation {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Center navigation bar items */
+nav .flex.items-center.justify-center,
+nav .flex.items-center.space-x-2,
+nav .flex.items-center.space-x-4,
+nav .items-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Simpler direct solution for nav centering */
+nav div.items-center {
+  justify-content: center !important;
+}
+
+/* Center the buy now button */
+.mt-8.mb-12.w-full.flex {
+  justify-content: center !important;
+}
+
+/* Make sure buy now container centers */
+.buy-now-container {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* Center social buttons container */
+.social-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Fix any flex items that should be centered */
+.flex.justify-center {
+  justify-content: center !important;
+}
+
+/* Enhanced Buy Now Button */
+.buy-now-button {
+  padding: 1.5rem 3rem !important;
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+  transform: scale(1.2);
+  transition: all 0.3s ease-in-out;
+  border: 2px solid rgba(118, 255, 3, 0.7) !important;
+  background: rgba(118, 255, 3, 0.1) !important;
+  box-shadow: 
+    0 0 10px rgba(118, 255, 3, 0.3),
+    0 0 20px rgba(118, 255, 3, 0.2),
+    inset 0 0 15px rgba(118, 255, 3, 0.2);
+  animation: buyButtonGlow 1.5s infinite alternate;
+}
+
+.buy-now-button:hover {
+  transform: scale(1.3) translateY(-5px);
+  box-shadow: 
+    0 0 20px rgba(118, 255, 3, 0.6),
+    0 0 40px rgba(118, 255, 3, 0.4),
+    inset 0 0 20px rgba(118, 255, 3, 0.4);
+  filter: brightness(1.3);
+}
+
+/* Enhanced green stroke for buy button */
+.buy-now-button .green-item-stroke {
+  -webkit-text-stroke: 3px rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 10px rgba(118, 255, 3, 0.8);
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Add a glow animation */
+@keyframes buyButtonGlow {
+  0% {
+    box-shadow: 
+      0 0 10px rgba(118, 255, 3, 0.3),
+      0 0 20px rgba(118, 255, 3, 0.2),
+      inset 0 0 15px rgba(118, 255, 3, 0.2);
+  }
+  100% {
+    box-shadow: 
+      0 0 15px rgba(118, 255, 3, 0.5),
+      0 0 30px rgba(118, 255, 3, 0.3),
+      inset 0 0 20px rgba(118, 255, 3, 0.3);
+  }
+}
+
+/* Make the buy-now-container larger to accommodate the bigger button */
+.buy-now-container {
+  margin: 2rem auto 3rem;
+  display: flex;
+  justify-content: center;
+  transform: scale(1.1);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .buy-now-button {
+    padding: 1.2rem 2.5rem !important;
+    font-size: 1.2rem !important;
+    transform: scale(1.1);
+  }
+  
+  .buy-now-button:hover {
+    transform: scale(1.15) translateY(-3px);
+  }
+  
+  .buy-now-container {
+    transform: scale(1);
+  }
+}
+
+/* Footer Button Styling */
+.footer-button {
+  display: inline-block;
+  padding: 0 10px;
+  font-family: 'Roboto Condensed', monospace;
+  font-size: 14px;
+  line-height: 48px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  position: relative;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
+}
+
+.footer-button:hover {
+  color: #ff00ff;
+  text-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
+}
+
+.footer-button:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #ff00ff;
+  transition: all 0.2s ease;
+  transform: translateX(-50%);
+}
+
+.footer-button:hover:after {
+  width: 80%;
+}
+
+/* Twitter - Hard blue */
+.footer-button.twitter-button:hover {
+  color: #1DA1F2;
+  text-shadow: 0 0 8px rgba(29, 161, 242, 0.6);
+}
+
+.footer-button.twitter-button:after {
+  background: #1DA1F2;
+}
+
+/* Telegram - Cyan */
+.footer-button.telegram-button:hover {
+  color: #0088cc;
+  text-shadow: 0 0 8px rgba(0, 136, 204, 0.6);
+}
+
+.footer-button.telegram-button:after {
+  background: #0088cc;
+}
+
+/* Discord - Navy blue */
+.footer-button.discord-button:hover {
+  color: #5865F2;
+  text-shadow: 0 0 8px rgba(88, 101, 242, 0.6);
+}
+
+.footer-button.discord-button:after {
+  background: #5865F2;
+}
+
+/* YouTube - Red */
+.footer-button.youtube-button:hover {
+  color: #ff0000;
+  text-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+}
+
+.footer-button.youtube-button:after {
+  background: #ff0000;
+}
+
+/* Twitch - Purple */
+.footer-button.twitch-button:hover {
+  color: #9146ff;
+  text-shadow: 0 0 8px rgba(145, 70, 255, 0.6);
+}
+
+.footer-button.twitch-button:after {
+  background: #9146ff;
+}
+
+/* Dexscreener - Green */
+.footer-button.dexscreener-button:hover {
+  color: #25C195;
+  text-shadow: 0 0 8px rgba(37, 193, 149, 0.6);
+}
+
+.footer-button.dexscreener-button:after {
+  background: #25C195;
+}
+
+/* Coingecko - Yellow */
+.footer-button.coingecko-button:hover {
+  color: #FFCE00;
+  text-shadow: 0 0 8px rgba(255, 206, 0, 0.6);
+}
+
+.footer-button.coingecko-button:after {
+  background: #FFCE00;
+}
+
+/* TikTok - Hot pink */
+.footer-button.tiktok-button:hover {
+  color: #FF0050;
+  text-shadow: 0 0 8px rgba(255, 0, 80, 0.6);
+}
+
+.footer-button.tiktok-button:after {
+  background: #FF0050;
+}
+
+/* Cast Page Specific Styling */
+.cast-page-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.cast-page-title {
+  margin-top: 3rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.cast-page-content {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.cast-member {
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1);
+  margin-bottom: 3rem;
+  width: 90%;
+  max-width: 800px;
+  position: relative;
+  z-index: 2;
+  will-change: transform; /* Add for smoother transitions */
+}
+
+.cast-member.left {
+  transform: translateX(-50px); /* Reduced from -100px */
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.cast-member.right {
+  transform: translateX(50px); /* Reduced from 100px */
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.cast-member.cast-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Timeline visibility control */
+.timeline-connector {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  position: absolute;
+  width: 4px;
+  left: calc(50% - 25px) !important;
+  top: 120px !important;
+  bottom: 200px !important;
+  height: auto !important;
+  transform: none;
+  z-index: -999 !important; /* Always behind content */
+}
+
+.timeline-visible {
+  opacity: 1;
+}
+
+/* Create a stacking context for the card container */
+.cast-card {
+  position: relative;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.85); /* Darker, more opaque background */
+  transform: translateZ(0); /* Force GPU acceleration and create stacking context */
+  padding: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+/* Ensure the container creates a stacking context */
+.cast-timeline-container {
+  isolation: isolate; /* Creates a new stacking context */
+  position: relative;
+}
+
+/* Force timeline to stay behind at all times */
+.timeline-connector {
+  pointer-events: none; /* Don't capture any mouse events */
+  z-index: -1 !important;
+  will-change: opacity; /* Optimize the opacity animation */
+}
+
+.cast-card:hover {
+  transform: translateY(-5px);
+}
+
+.cast-timeline-container {
+    position: relative;
+  min-height: 100vh;
+  padding: 120px 0 200px; /* Add top/bottom padding */
+}
+
+/* Mobile responsive styles for cast page */
+@media (max-width: 768px) {
+  .cast-member.left, .cast-member.right {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .timeline-connector {
+    left: 30px;
+  }
+  
+  .timeline-dot {
+    left: 30px;
+  }
+  
+  .cast-page-title {
+    margin-top: 2rem !important;
+  }
+}
+
+/* Loading spinner for clips page */
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+        align-items: center;
+  height: 40px;
+  width: 40px;
+    position: relative;
+}
+
+.spinner-circle {
+    position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 243, 255, 0.2);
+  border-top-color: rgba(0, 243, 255, 0.8);
+  border-radius: 50%;
+  animation: spinner-rotate 1s linear infinite;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+}
+
+@keyframes spinner-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Add a subtle glow effect */
+.spinner-circle::after {
+  content: '';
+    position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+    border-radius: 50%;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+  animation: spinner-glow 2s ease-in-out infinite;
+}
+
+@keyframes spinner-glow {
+  0%, 100% {
+    opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Larger loading spinner for overlay */
+.loading-spinner-large {
+    display: flex;
+  justify-content: center;
+    align-items: center;
+  height: 60px;
+  width: 60px;
+    position: relative;
+}
+
+.spinner-circle-large {
+    position: absolute;
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(0, 243, 255, 0.2);
+  border-top-color: rgba(0, 243, 255, 0.8);
+  border-radius: 50%;
+  animation: spinner-rotate 1.2s linear infinite;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+}
+
+.spinner-circle-large::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+  animation: spinner-glow 2s ease-in-out infinite;
+}
+
+/* Make sure loading components are positioned correctly */
+.loading-content {
+  position: relative;
+    display: flex;
+  flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  z-index: 60;
+}
+
+.loading-title, .loading-subtitle {
+  text-align: center;
+  width: 100%;
+  text-shadow: 0 0 15px currentColor;
+}
+
+/* Fix for navigation z-index */
+nav.fixed {
+  z-index: 50;
+}
+
+/* Basic social button styling - white text with hover glow effects */
+.social-button {
+  color: white !important;
+  text-shadow: none !important;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible;
+}
+
+/* Remove complex positioning and stroke effects */
+.social-button .red-item-stroke,
+.social-button .blue-item-stroke, 
+.social-button .green-item-stroke,
+.social-button .yellow-item-stroke,
+.social-button .purple-item-stroke,
+.social-button .pink-item-stroke,
+.social-button .navy-item-stroke,
+.social-button .red-item-no-stroke,
+.social-button .blue-item-no-stroke,
+.social-button .green-item-no-stroke,
+.social-button .yellow-item-no-stroke,
+.social-button .purple-item-no-stroke,
+.social-button .pink-item-no-stroke,
+.social-button .navy-item-no-stroke {
+  color: white !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0 !important;
+  position: static !important;
+}
+
+/* Hide the stroke elements completely */
+.social-button .red-item-stroke,
+.social-button .blue-item-stroke,
+.social-button .green-item-stroke,
+.social-button .yellow-item-stroke,
+.social-button .purple-item-stroke,
+.social-button .pink-item-stroke,
+.social-button .navy-item-stroke {
+  display: none !important;
+}
+
+/* Add platform-specific color glows on hover */
+.social-button-twitter:hover .blue-item-no-stroke,
+.footer-button.twitter-button:hover {
+  text-shadow: 0 0 10px rgba(29, 161, 242, 0.8) !important;
+}
+
+.social-button-discord:hover .navy-item-no-stroke,
+.footer-button.discord-button:hover {
+  text-shadow: 0 0 10px rgba(114, 137, 218, 0.8) !important;
+}
+
+.social-button-youtube:hover .red-item-no-stroke,
+.footer-button.youtube-button:hover {
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.8) !important;
+}
+
+.social-button-twitch:hover .purple-item-no-stroke,
+.footer-button.twitch-button:hover {
+  text-shadow: 0 0 10px rgba(100, 65, 165, 0.8) !important;
+}
+
+.social-button-dexscreener:hover .green-item-no-stroke,
+.footer-button.dexscreener-button:hover {
+  text-shadow: 0 0 10px rgba(0, 200, 83, 0.8) !important;
+}
+
+.social-button-coingecko:hover .yellow-item-no-stroke,
+.footer-button.coingecko-button:hover {
+  text-shadow: 0 0 10px rgba(140, 198, 63, 0.8) !important;
+}
+
+.social-button-tiktok:hover .pink-item-no-stroke,
+.footer-button.tiktok-button:hover {
+  text-shadow: 0 0 10px rgba(238, 29, 82, 0.8) !important;
+}
+
+/* Add subtle button glow on hover */
+.social-button:hover,
+.footer-button:hover {
+  filter: brightness(1.2);
+}
+/* Direct colored glow effects for social buttons */
+.social-button-twitter:hover {
+  box-shadow: 0 0 15px rgba(29, 161, 242, 0.7) !important;
+  border-color: rgba(29, 161, 242, 0.5) !important;
+}
+
+.social-button-telegram:hover {
+  box-shadow: 0 0 15px rgba(0, 136, 204, 0.7) !important;
+  border-color: rgba(0, 136, 204, 0.5) !important;
+}
+
+.social-button-discord:hover {
+  box-shadow: 0 0 15px rgba(114, 137, 218, 0.7) !important;
+  border-color: rgba(114, 137, 218, 0.5) !important;
+}
+
+.social-button-youtube:hover {
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7) !important;
+  border-color: rgba(255, 0, 0, 0.5) !important;
+}
+
+.social-button-twitch:hover {
+  box-shadow: 0 0 15px rgba(100, 65, 165, 0.7) !important;
+  border-color: rgba(100, 65, 165, 0.5) !important;
+}
+
+.social-button-dexscreener:hover {
+  box-shadow: 0 0 15px rgba(0, 200, 83, 0.7) !important;
+  border-color: rgba(0, 200, 83, 0.5) !important;
+}
+
+.social-button-coingecko:hover {
+  box-shadow: 0 0 15px rgba(140, 198, 63, 0.7) !important;
+  border-color: rgba(140, 198, 63, 0.5) !important;
+}
+
+.social-button-tiktok:hover {
+  box-shadow: 0 0 15px rgba(238, 29, 82, 0.7) !important;
+  border-color: rgba(238, 29, 82, 0.5) !important;
+}
+
+/* Ensure the text glows with the same color */
+.social-button-twitter:hover *,
+.social-button-telegram:hover *,
+.social-button-discord:hover *,
+.social-button-youtube:hover *,
+.social-button-twitch:hover *,
+.social-button-dexscreener:hover *,
+.social-button-coingecko:hover *,
+.social-button-tiktok:hover * {
+  color: white !important;
+  filter: brightness(1.3) !important;
+}
+
+/* Add color variants for glitch buttons */
+.glitch-button.red .red-item-stroke {
+  -webkit-text-stroke: 2px var(--neon-red);
+  text-shadow: 0 0 10px var(--neon-red);
+}
+
+.glitch-button.red:hover {
+  box-shadow: 0 0 30px var(--neon-red);
+}
+
+.glitch-button.green .green-item-stroke {
+  -webkit-text-stroke: 2px var(--neon-green);
+  text-shadow: 0 0 10px var(--neon-green);
+}
+
+.glitch-button.green:hover {
+  box-shadow: 0 0 30px var(--neon-green);
+}
+
+/* Keep text white for both states */
+.glitch-button .red-item-no-stroke,
+.glitch-button .green-item-no-stroke {
+  color: white !important;
+  text-shadow: 0 0 5px rgba(255,255,255,0.3);
+}
+
+/* Add delay to animation */
+.cast-member:nth-child(odd) {
+  transition-delay: 0.3s;
+}
+
+.cast-member:nth-child(even) {
+  transition-delay: 0.6s;
+}
+
+/* Special handling for phase 3 (last item) */
+.cast-member:last-child {
+  z-index: 25 !important; /* Even higher z-index for the last item */
+  transition-delay: 1s !important; /* Longer delay for the last phase */
+}
+
+.cast-member:last-child .cast-card {
+  background: rgba(0, 0, 0, 0.95) !important; /* Fully opaque background */
+  z-index: 25 !important;
+  position: relative;
+}
+
+/* Increase timeline delay further */
+.timeline-connector {
+  transition: opacity 1.5s ease;
+  transition-delay: 0.5s; /* Add delay to timeline appearance */
+}
+
+/* Center images in the roadmap cards */
+.cast-card .image-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100%;
+  height: 100%;
+}
+
+.cast-card img {
+  object-fit: contain !important;
+  margin: 0 auto !important;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+/* Tokenomics page responsiveness */
+.tokenomics-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.pie-chart-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 2rem;
+}
+
+.pie-chart-container {
+  width: 100%;
+  max-width: 420px;
+  flex-shrink: 0;
+}
+
+/* Mobile responsiveness for tokenomics */
+@media (max-width: 768px) {
+  .pie-chart-wrapper {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .pie-chart-container {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .token-distribution-legend {
+    max-width: 100% !important;
+    width: 100%;
+  }
+  
+  .tokenomics-card {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .token-legend-item {
+    padding: 6px !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .pie-chart-container {
+    max-width: 260px;
+  }
+  
+  .tokenomics-card {
+    padding: 1rem 0.75rem !important;
+    width: 95% !important;
+  }
+}
+
+/* Fix tokenomics page container issues */
+.tokenomics-card {
+  overflow: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Ensure the pie chart stays contained */
+.pie-chart-container svg {
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+  display: block; /* Ensure block display */
+  margin: 0 auto; /* Center the SVG */
+}
+
+/* Prevent horizontal overflow on mobile */
+.stream-window {
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+@media (max-width: 480px) {
+  .tokenomics-layout {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .pie-chart-container {
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  /* Make pie segments more visible by centering them better */
+  svg[viewBox="0 0 520 520"] {
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+  }
+  
+  /* Reduce bottom list padding */
+  .mt-10 {
+    margin-top: 2rem !important;
+    padding: 0.75rem !important;
+  }
+}
+
+/* Mobile responsive layout for tokenomics */
+@media (max-width: 768px) {
+  .pie-chart-wrapper {
+    flex-direction: column !important; /* Force column layout */
+    align-items: center !important;
+    gap: 2rem !important;
+  }
+  
+  .token-distribution-legend {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  /* Ensure SVG is centered */
+  .pie-chart-container {
+    display: flex !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    max-width: 340px !important;
+  }
+  
+  /* Reduce font size for better mobile fit */
+  .token-legend-item {
+    font-size: 14px !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .tokenomics-card {
+    padding: 1.5rem 0.75rem !important;
+  }
+  
+  .pie-chart-container {
+    max-width: 280px !important;
+  }
+}
+
+/* Mobile responsive styles for buy page */
+@media (max-width: 768px) {
+  .about-us-card {
+    padding: 1.5rem !important;
+  }
+  
+  .template-container {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  /* Ensure content doesn't get cut off on small screens */
+  .template-content {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+}
+
+/* Ensure all pages have consistent footer appearance on mobile */
+@media (max-width: 480px) {
+  /* Apply to all footers across all pages */
+  footer.fixed {
+    background: transparent !important;
+  }
+  
+  .footer-button {
+    color: white !important;
+    font-size: 14px !important;
+    padding: 0 8px !important;
+  }
+  
+  /* Make footer scrollable on small screens */
+  footer .flex {
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* Ensure nav buttons are readable on all pages */
+.nav-button {
+  white-space: nowrap !important;
+  padding: 0 10px !important;
+}
+
+@media (max-width: 480px) {
+  .nav-button {
+    padding: 0 8px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Apply transparent footer with white text consistently */
+.transparent-footer {
+  background: transparent !important;
+}
+
+.transparent-footer .footer-button {
+  color: white !important;
+}
+
+/* Make white text readable on all backgrounds */
+.footer-button {
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Mobile responsive styles for About Us section */
+@media (max-width: 768px) {
+  .about-us-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem !important;
+  }
+  
+  .about-us-card {
+    padding: 1.5rem !important;
+    margin-bottom: 4rem !important;
+  }
+  
+  .degenswim-title {
+    font-size: 2.5rem !important;
+    margin-top: 2rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .about-us-card {
+    padding: 1.25rem !important;
+  }
+  
+  .degenswim-title {
+    font-size: 2rem !important;
+  }
+}
+
+.about-us-title {
+  font-size: 3rem;
+}
+
+@media (max-width: 480px) {
+  .about-us-title {
+    font-size: 2rem;
+  }
+}
+
+.about-us-card {
+  padding: 2rem;
+}
+
+@media (max-width: 480px) {
+  .about-us-card {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-us-card {
+    margin-bottom: 4rem !important;
   }
 }
